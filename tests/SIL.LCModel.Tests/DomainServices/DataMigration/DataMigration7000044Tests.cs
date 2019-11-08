@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -100,8 +101,12 @@ namespace SIL.LCModel.DomainServices.DataMigration
 
 			IDomainObjectDTORepository dtoRepos = new DomainObjectDtoRepository(7000043, dtos, mockMDC, projectFolder,
 				TestDirectoryFinder.LcmDirectories);
+			Console.WriteLine(System.Diagnostics.Process.Start("tree", "path /f")?.StandardOutput);
+			Console.WriteLine("^^ directory state prior to migration");
 			// Do the migration.
 			m_dataMigrationManager.PerformMigration(dtoRepos, 7000044, new DummyProgressDlg());
+			Console.WriteLine(System.Diagnostics.Process.Start("tree", "path /f")?.StandardOutput);
+			Console.WriteLine("^^ directory state following migration");
 
 			// Verification Phase
 			Assert.AreEqual(7000044, dtoRepos.CurrentModelVersion, "Wrong updated version.");
@@ -178,10 +183,13 @@ namespace SIL.LCModel.DomainServices.DataMigration
 			{
 				foreach (string file in Directory.GetFiles(path))
 					File.Delete(file);
+				Console.WriteLine(System.Diagnostics.Process.Start("tree", "path /f")?.StandardOutput);
+				Console.WriteLine("^^ Directory state prior to test execution");
 			}
 			else
 			{
 				Directory.CreateDirectory(path);
+				Console.WriteLine("starting with a clean directory");
 			}
 		}
 
